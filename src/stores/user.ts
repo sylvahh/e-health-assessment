@@ -9,13 +9,13 @@ import { loadDataFromIndexedDB, saveDataToIndexedDB } from '@/utils/indexDB'
 
 export const useUserStore = defineStore('user', () => {
   const users = ref<USER[]>([])
-  const count = ref(10)
   const isLoading = ref(false)
   const offlineMode = ref(!navigator.onLine)
+  const isDevMode = ref(devMode)
 
   const getUsers = async () => {
     isLoading.value = true
-    if (devMode) {
+    if (isDevMode.value) {
       // Use dummy data in development mode
       users.value = usersList
       await saveData(users.value)
@@ -69,5 +69,5 @@ export const useUserStore = defineStore('user', () => {
     }))
   })
 
-  return { count, users, isLoading,offlineMode, getUsers, saveData, loadData, groupedData }
+  return {  users, isLoading,offlineMode, isDevMode, getUsers, saveData, loadData, groupedData }
 })

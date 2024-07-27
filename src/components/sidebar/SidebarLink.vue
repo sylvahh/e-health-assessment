@@ -16,7 +16,7 @@ import { useRoute } from 'vue-router'
 import {type SidebarLinksTypes } from './data'
 
 export default defineComponent({
-  name: 'NavLink',
+  name: 'SidebarLink',
   props: {
     link: {
       type: Object as PropType<SidebarLinksTypes>,
@@ -38,7 +38,7 @@ export default defineComponent({
     const isActive = computed(() => {
       const allPaths = [props.link.path, ...props.link.relativePaths]
       return (
-        allPaths.some((pathPrefix) => route.path.startsWith(pathPrefix)) ||
+        allPaths.some((pathPrefix) => route?.path.startsWith(pathPrefix)) ||
         props.activeLink === props.link.name
       )
     })

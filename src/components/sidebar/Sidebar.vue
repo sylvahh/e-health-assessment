@@ -3,7 +3,7 @@
     <SidebarHeader :setShowSidebar="setShowSidebar" />
     <div class="h-full px-2 py-10 lg:pr-5 flex flex-col">
       <ul class="space-y-10 flex-grow">
-        <NavLink
+        <SidebarLink
           v-for="(link, idx) in sidebarLinks"
           :key="idx"
           :link="link"
@@ -19,14 +19,14 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
 import SidebarHeader from './SidebarHeader.vue'
-import NavLink from './NavLink.vue'
+import SidebarLink from './SidebarLink.vue'
 import { sidebarLinks } from './data'
 
 export default defineComponent({
   name: 'SidebarComponent',
   components: {
     SidebarHeader,
-    NavLink
+    SidebarLink
   },
   props: {
     showSidebar: {
