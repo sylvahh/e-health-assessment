@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.spinner {
+  aspect-ratio: 1;
+  width: 3rem;
+  height: 3rem;
+  display: grid;
+  border-radius: 50%;
+  background:
+    linear-gradient(0deg, rgba(250, 248, 248, 0.5) 30%, #0000 0 70%, rgb(0 0 0/100%) 0) 50%/8% 100%,
+    linear-gradient(90deg, rgba(221, 219, 219, 0.25) 30%, #0000 0 70%, rgb(0 0 0/75%) 0) 50%/100% 8%;
+  background-repeat: no-repeat;
+  animation: l23 1s infinite steps(12);
+}
+
+.spinner::before,
+.spinner::after {
+  content: '';
+  grid-area: 1/1;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.915;
+  transform: rotate(30deg);
+}
+
+.spinner::after {
+  opacity: 0.83;
+  transform: rotate(60deg);
+}
+
+@keyframes l23 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.no-record-found {
+  @apply flex justify-center items-center text-2xl font-bold text-neutral-500;
+}
