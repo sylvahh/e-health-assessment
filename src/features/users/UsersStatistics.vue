@@ -18,12 +18,15 @@ import BarChart from './components/barChart/BarChart.vue'
 import UserHeader from './components/header/UserHeader.vue'
 
 const userStore = useUserStore()
-
+ const updateOnlineStatus = () => {
+      userStore.offlineMode = !navigator.onLine;
+    };
 onMounted(async () => {
-  if (userStore.offlineMode) {
+   window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+  if (!userStore.offlineMode) {
     await userStore.getUsers()
   } else {
-    alert('You are currently ofline ')
     const savedData = await userStore.loadData()
     userStore.users = savedData
   }

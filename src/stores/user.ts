@@ -3,14 +3,15 @@ import { defineStore } from 'pinia'
 import type { USER, BLOOD_GROUP } from '@/global.types'
 import { usersList } from '@/constants/dummy/users'
 import { devMode } from '@/constants/vars'
-import { db } from '@/firebaseConfig'
+import { db } from '@/utils/firebaseConfig'
 import { collection, getDocs } from 'firebase/firestore'
+import { loadDataFromIndexedDB, saveDataToIndexedDB } from '@/utils/indexDB'
 
 export const useUserStore = defineStore('user', () => {
   const users = ref<USER[]>([])
   const count = ref(10)
   const isLoading = ref(false)
-  const offlineMode = ref(navigator.onLine)
+  const offlineMode = ref(!navigator.onLine)
 
   const getUsers = async () => {
     isLoading.value = true
@@ -33,50 +34,13 @@ export const useUserStore = defineStore('user', () => {
   }
 
   const saveData = async (data: USER[]) => {
-    if ('indexedDB' in window) {
-      const db = await openDB()
-      const tx = db.transaction('users', 'readwrite')
-      const store = tx.objectStore('users')
-      store.put(JSON.stringify(data), 'userList')
-      db.close()
-    } else {
-      localStorage.setItem('userList', JSON.stringify(data))
-    }
+    await saveDataToIndexedDB(data, 'userList')
   }
 
   const loadData = async () => {
-    if ('indexedDB' in window) {
-      const db = await openDB()
-      const tx = db.transaction('users', 'readonly')
-      const store = tx.objectStore('users')
-      const request = store.get('userList')
-      return new Promise<USER[]>((resolve, reject) => {
-        request.onsuccess = () => {
-          const data = request.result
-          db.close()
-          resolve(data ? JSON.parse(data) : [])
-        }
-        request.onerror = () => {
-          db.close()
-          reject(request.error)
-        }
-      })
-    } else {
-      const data = localStorage.getItem('userList')
-      return data ? JSON.parse(data) : []
-    }
-  }
-
-  const openDB = async () => {
-    return new Promise<IDBDatabase>((resolve, reject) => {
-      const request = indexedDB.open('UserStore', 1)
-      request.onupgradeneeded = () => {
-        const db = request.result
-        db.createObjectStore('users')
-      }
-      request.onsuccess = () => resolve(request.result)
-      request.onerror = () => reject(request.error)
-    })
+    const data = await loadDataFromIndexedDB('userList')
+    users.value = data || []
+    return data
   }
 
   const groupedData = computed(() => {
